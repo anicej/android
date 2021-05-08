@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="org.owntracks.android.ui.map.MapViewModel" />
+
+        <import type="org.owntracks.android.support.DateFormatter" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinatorLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:elevation="4dp"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?android:attr/actionBarSize"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/mapView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <LinearLayout
+            android:id="@+id/bottomSheetLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/background"
+            android:clickable="true"
+            android:elevation="6dp"
+            android:focusable="true"
+            android:orientation="vertical"
+            app:behavior_hideable="true"
+            app:behavior_peekHeight="72dp"
+            app:layout_behavior="@string/bottom_sheet_behavior">
+
+            <include
+                android:id="@+id/contactPeek"
+                layout="@layout/ui_row_contact" />
+
+            <TextView
+                android:id="@+id/acc"
+                style="@style/ListItemPrimary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:paddingStart="72dp"
+                android:paddingTop="@dimen/activity_horizontal_margin"
+                android:paddingEnd="@dimen/activity_horizontal_margin"
+                android:singleLine="true"
+                android:textIsSelectable="true"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/accLabel"
+                style="@style/ListItemSecondary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:paddingStart="72dp"
+                android:paddingEnd="@dimen/activity_horizontal_margin"
+                android:paddingBottom="@dimen/activity_horizontal_margin"
+                android:singleLine="true"
+                android:text="@string/contactDetailsAccuracy" />
+
+            <TextView
+                android:id="@+id/distance"
+                style="@style/ListItemPrimary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:paddingStart="72dp"
+                android:paddingTop="@dimen/activity_horizontal_margin"
+                android:paddingEnd="@dimen/activity_horizontal_margin"
+                android:singleLine="true"
+                android:textIsSelectable="true"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/distanceLabel"
+                style="@style/ListItemSecondary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:paddingStart="72dp"
+                android:paddingEnd="@dimen/activity_horizontal_margin"
+                android:paddingBottom="@dimen/activity_horizontal_margin"
+                android:singleLine="true"
+                android:text="@string/distance_label"
+                android:textIsSelectable="true" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="72dp"
+                android:background="#E4E4E4" />
+
+            <TextView
+                android:id="@+id/tid"
+                style="@style/ListItemPrimary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:paddingStart="72dp"
+                android:paddingTop="@dimen/activity_horizontal_margin"
+                android:paddingEnd="@dimen/activity_horizontal_margin"
+                android:singleLine="true"
+                android:textIsSelectable="true" />
+
+            <TextView
+                android:id="@+id/tidLabel"
+                style="@style/ListItemSecondary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:paddingStart="72dp"
+                android:paddingEnd="@dimen/activity_horizontal_margin"
+                android:paddingBottom="@dimen/activity_horizontal_margin"
+                android:singleLine="true"
+                android:text="@string/contactDetailsTrackerId" />
+
+            <TextView
+                android:id="@+id/id"
+                style="@style/ListItemPrimary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:paddingStart="72dp"
+                android:paddingTop="@dimen/activity_horizontal_margin"
+                android:paddingEnd="@dimen/activity_horizontal_margin"
+                android:singleLine="true"
+                android:textIsSelectable="true" />
+
+            <TextView
+                android:id="@+id/topicLabel"
+                style="@style/ListItemSecondary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:paddingStart="72dp"
+                android:paddingEnd="@dimen/activity_horizontal_margin"
+                android:paddingBottom="@dimen/activity_horizontal_margin"
+                android:singleLine="true"
+                android:text="@string/contactDetailsTopic" />
+
+            <ImageView
+                android:id="@+id/moreButton"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="58dp"
+                android:layout_marginBottom="8dp"
+                android:adjustViewBounds="true"
+                android:background="?selectableItemBackgroundBorderless"
+                android:contentDescription="@string/show_options"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_baseline_more_horiz_24"
+                android:tintMode="src_in"
+                app:tint="@color/buttonTint" />
+
+        </LinearLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

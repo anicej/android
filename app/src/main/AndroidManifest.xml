@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="org.owntracks.android">
+
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+
+    <uses-feature
+        android:name="android.hardware.location.gps"
+        android:required="true"
+        tools:ignore="UnsupportedChromeOsHardware" />
+
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- To access the network -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- To handle connectivity changes and reconnect -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- To prevent the device from sleeping while handling MQTT traffic -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- To autostart the app once the device boots -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- Not actively requested. Has to be enabled manually. Access to broker certificates in private storage on older APIs or on devices not providing files through content:// URIs -->
+
+    <!-- To locate the device -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <!-- To access Google Play Services -->
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+
+    <!-- API v28 requires this for foreground services -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
+<!--    <uses-permission android:name="android.permission.BLUETOOTH_PRIVILEGED" />-->
+
+    <application
+        android:name=".App"
+        android:allowBackup="true"
+        android:extractNativeLibs="false"
+        android:fullBackupContent="@xml/backup_descriptor"
+        android:hardwareAccelerated="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Owntracks"
+        tools:ignore="UnusedAttribute"
+        tools:replace="android:allowBackup">
+
+        <!-- Disables default initialization of WorkManager because custom initializer is used in App.onCreate()-->
+        <provider
+            android:name="androidx.work.impl.WorkManagerInitializer"
+            android:authorities="${applicationId}.workmanager-init"
+            android:enabled="false"
+            android:exported="false"
+            tools:replace="android:authorities" />
+
+        <!-- Maps SDK requires this as of API v28 -->
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/GOOGLE_MAPS_API_KEY" />
+
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value=".ui.map.MapActivity" />
+
+        <meta-data
+            android:name="firebase_analytics_collection_deactivated"
+            android:value="true" />
+
+        <activity
+            android:name=".ui.regions.RegionsActivity"
+            android:label="@string/title_activity_regions"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".ui.region.RegionActivity"
+            android:label="@string/title_activity_region"
+            android:launchMode="singleTop">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.regions.RegionsActivity" />
+        </activity>
+        <activity
+            android:name=".ui.preferences.PreferencesActivity"
+            android:hardwareAccelerated="true"
+            android:label="@string/title_activity_preferences"
+            android:parentActivityName=".ui.map.MapActivity" />
+        <activity
+            android:name=".ui.preferences.about.AboutActivity"
+            android:hardwareAccelerated="true"
+            android:label="@string/title_activity_about"
+            android:parentActivityName=".ui.map.MapActivity" />
+        <activity
+            android:name=".ui.preferences.editor.EditorActivity"
+            android:configChanges="orientation"
+            android:label="@string/configurationManagement"
+            android:parentActivityName=".ui.preferences.PreferencesActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.preferences.PreferencesActivity" />
+        </activity>
+
+        <activity
+            android:name=".ui.preferences.load.LoadActivity"
+            android:configChanges="orientation"
+            android:label="@string/app_name"
+            android:launchMode="singleTask">
+
+            <!-- Support two dots in file name: -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data
+                    android:host="*"
+                    android:mimeType="*/*"
+                    android:pathPattern=".*\\..*\\.otrc"
+                    android:scheme="content" />
+            </intent-filter>
+
+            <!-- Support three dots in file name: -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data
+                    android:host="*"
+                    android:mimeType="*/*"
+                    android:pathPattern=".*\\..*\\..*\\.otrc"
+                    android:scheme="content" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host=""
+                    android:path="/config"
+                    android:scheme="owntracks"
+                    tools:ignore="AppLinkUrlError" />
+            </intent-filter>
+            <intent-filter tools:ignore="AppLinkUrlError,GoogleAppIndexingWarning">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <intent-filter tools:ignore="AppLinkUrlError,GoogleAppIndexingWarning">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="application/json" />
+            </intent-filter>
+            <intent-filter tools:ignore="AppLinkUrlError,GoogleAppIndexingWarning">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="application/otrc" />
+            </intent-filter>
+            <intent-filter tools:ignore="AppLinkUrlError,GoogleAppIndexingWarning">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="application/octet-stream" />
+            </intent-filter>
+        </activity>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="org.owntracks.android.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
+
+        <service
+            android:name=".services.BackgroundService"
+            android:enabled="true"
+            android:exported="true"
+            android:foregroundServiceType="location"
+            tools:ignore="ExportedService">
+
+            <intent-filter>
+                <action android:name="org.owntracks.android.CLEAR_NOTIFICATIONS" /> <!-- INTENT_ACTION_CLEAR_NOTIFICATIONS -->
+                <action android:name="org.owntracks.android.SEND_LOCATION_USER" /> <!-- INTENT_ACTION_SEND_LOCATION_PING -->
+                <action android:name="org.owntracks.android.SEND_EVENT_CIRCULAR" /> <!-- INTENT_ACTION_SEND_WAYPOINTS -->
+                <action android:name="org.owntracks.android.REREQUEST_LOCATION_UPDATES" /> <!-- REREQUEST_LOCATION_UPDATES -->
+                <action android:name="org.owntracks.android.CHANGE_MONITORING" /> <!-- INTENT_ACTION_CHANGE_MONITORING -->
+            </intent-filter>
+        </service>
+
+        <receiver
+            android:name=".support.receiver.StartBackgroundServiceReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name=".ui.status.StatusActivity"
+            android:exported="true"
+            android:label="@string/title_activity_status"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.map.MapActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.map.MapActivity" />
+        </activity>
+        <activity
+            android:name=".ui.contacts.ContactsActivity"
+            android:clearTaskOnLaunch="true"
+            android:label="@string/title_activity_contacts"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".ui.map.MapActivity"
+            android:clearTaskOnLaunch="true"
+            android:label="@string/app_name"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
+
+
+        <activity
+            android:name=".ui.preferences.connection.ConnectionActivity"
+            android:clearTaskOnLaunch="true"
+            android:label="@string/preferencesServer"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".ui.map.ble.view.ScannerActivity"
+            android:clearTaskOnLaunch="true"
+            android:label="@string/preferencesServer"
+            android:launchMode="singleTask" />
+
+        <activity
+            android:name=".ui.status.LogViewerActivity"
+            android:clearTaskOnLaunch="true"
+            android:label="@string/logViewerActivityTitle"
+            android:launchMode="singleTask" />
+
+        <activity
+            android:name=".ui.welcome.WelcomeActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="unspecified" />
+
+        <provider
+            android:name=".ui.status.LogViewerActivity$ExportedLogContentProvider"
+            android:authorities="${applicationId}.log"
+            android:exported="false"
+            android:grantUriPermissions="true" />
+    </application>
+
+</manifest>
